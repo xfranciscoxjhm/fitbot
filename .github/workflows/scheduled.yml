@@ -1,12 +1,21 @@
 name: Scheduled FitBot run
-
 on:
-  schedule:
-  - cron: "25 17 * * *"
-
+  workflow_dispatch:
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: Run fitbot
-        run: docker run -e email=${{ secrets.EMAIL }} -e password=${{ secrets.PASSWORD }} -e booking-goals='{"0":{"time":"1920","name":"WOD"},"1":{"time":"1920","name":"Endurance"},"3":{"time":"1920","name":"WOD"}}' -e box-name=areacrossfit -e box-id=8266 -e days-in-advance=2 -e proxy=${{ secrets.PROXY }} pablobuenaposada/fitbot
+        run: docker run -e email=${{ secrets.AIMHARDER_EMAIL }} -e password=${{ secrets.AIMHARDER_PASSWORD }} -e booking-goals='{"1":{"time":"0700","name":"Open Box Jungle"}}' -e box-name=crossfitlcs -e box-id=9687 -e days-in-advance=4 -e proxy= pablobuenaposada/fitbot
+      - name: Notify Telegram
+        if: always()
+        run: |
+          STATUS=${{ job.status }}
+          if [ "$STATUS" = "success" ]; then
+            MSG="✅ FitBot ejecutado correctamente"
+          else
+            MSG="❌ FitBot ha fallado — revisa GitHub Actions"
+          fi
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_TOKEN }}/sendMessage" \
+            -d chat_id=${{ secrets.TELEGRAM_CHAT_ID }} \
+            -d text="$MSG"
