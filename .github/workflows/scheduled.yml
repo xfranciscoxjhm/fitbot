@@ -1,12 +1,13 @@
 name: Scheduled FitBot run
 on:
-  workflow_dispatch:
+  schedule:
+  - cron: "30 8 * * 1,2,3,4,5,6"
 jobs:
   run:
     runs-on: ubuntu-latest
     steps:
       - name: Run fitbot
-        run: docker run -e email=${{ secrets.AIMHARDER_EMAIL }} -e password=${{ secrets.AIMHARDER_PASSWORD }} -e booking-goals='{"1":{"time":"0700","name":"Open Box Jungle"}}' -e box-name=crossfitlcs -e box-id=9687 -e days-in-advance=4 -e proxy= pablobuenaposada/fitbot
+        run: docker run -e email=${{ secrets.AIMHARDER_EMAIL }} -e password=${{ secrets.AIMHARDER_PASSWORD }} -e booking-goals='{"1":{"time":"0700","name":"WOD LCS"},"2":{"time":"0700","name":"WOD LCS"},"3":{"time":"0700","name":"WOD LCS"},"4":{"time":"0700","name":"OPEN BOX LCS"},"5":{"time":"1000","name":"WOD LCS"},"6":{"time":"1000","name":"OPEN BOX LCS"}}' -e box-name=crossfitlcs -e box-id=9687 -e days-in-advance=4 -e proxy= pablobuenaposada/fitbot
       - name: Notify Telegram
         if: always()
         run: |
